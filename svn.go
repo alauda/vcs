@@ -63,6 +63,9 @@ func NewSvnRepo(remote, local string) (*SvnRepo, error) {
 // SvnRepo implements the Repo interface for the Svn source control.
 type SvnRepo struct {
 	base
+
+	Username string
+	Password string
 }
 
 // Vcs retrieves the underlying VCS being implemented.
@@ -80,7 +83,9 @@ func (s *SvnRepo) Get() error {
 	} else if runtime.GOOS == "windows" && filepath.VolumeName(remote) != "" {
 		remote = "file:///" + remote
 	}
-	out, err := s.run("svn", "checkout", remote, s.LocalPath())
+	out, err := s.run("svn", "checkout", remote, s.LocalPath(),
+		"--username", s.Username, "--password", s.Password,
+		)
 	if err != nil {
 		return NewRemoteError("Unable to get repository", err, string(out))
 	}
