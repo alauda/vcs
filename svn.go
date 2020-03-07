@@ -121,7 +121,7 @@ func (s *SvnRepo) Init() error {
 
 // Update performs an SVN update to an existing checkout.
 func (s *SvnRepo) Update() error {
-	out, err := s.RunFromDir("svn", "update")
+	out, err := s.RunFromDir("svn", "update", "--username", s.Username, "--password", s.Password)
 	if err != nil {
 		return NewRemoteError("Unable to update repository", err, string(out))
 	}
