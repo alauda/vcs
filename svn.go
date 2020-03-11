@@ -47,7 +47,11 @@ func NewSvnRepo(remote, local string) (*SvnRepo, error) {
 			return nil, NewLocalError("Unable to retrieve local repo information", err, string(out))
 		}
 		if detectedRemote != "" && remote != "" && detectedRemote != remote {
-			return nil, ErrWrongRemote
+			// ignore the / error
+			if detectedRemote+"/" != remote {
+				return nil, ErrWrongRemote
+			}
+
 		}
 
 		// If no remote was passed in but one is configured for the locally
@@ -85,7 +89,7 @@ func (s *SvnRepo) Get() error {
 	}
 	out, err := s.run("svn", "checkout", remote, s.LocalPath(),
 		"--username", s.Username, "--password", s.Password,
-		)
+	)
 	if err != nil {
 		return NewRemoteError("Unable to get repository", err, string(out))
 	}
